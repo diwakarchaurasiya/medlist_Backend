@@ -5,7 +5,7 @@ const cloudinary = require('cloudinary').v2;
 // Create a new doctor
 const createDoctor = async (req, res) => {
     try {
-        const {
+        let {
             name,
             specialization,
             experience,
@@ -18,6 +18,7 @@ const createDoctor = async (req, res) => {
             profileImage,
             workingHours
         } = req.body;
+        console.log(req.file);
         // Check if all fields are entered
         if (!name || !specialization || !experience || !contactNumber || !email || !licenseNumber || !qualification || !workingHours || !password || !appointmentFees) {
             return res.status(400).json({ success: false, message: 'All fields are required' });
@@ -32,12 +33,11 @@ const createDoctor = async (req, res) => {
         const hashedPassword = await bcrypt.hash(password, salt);
 
         // Upload profile image to Cloudinary
-        const localImage = req.file;
-        console.log(localImage);
-        // const uploadCloudinary = await cloudinary.uploader.upload(localImage, { resource_type: "image" });
-        // console.log(uploadCloudinary)
-        // const imageUrl = await uploadCloudinary?.secure_url;
-        const imageUrl = "https://medlistbydiwakar.netlify.app/assets/doc2-Y_tw-_wb.png";
+
+        const uploadCloudinary = await cloudinary.uploader.upload(profileImage, { resource_type: "image" });
+        console.log(uploadCloudinary)
+        const imageUrl = await uploadCloudinary?.secure_url;
+        // const imageUrl = "https://medlistbydiwakar.netlify.app/assets/doc2-Y_tw-_wb.png";
 
         // Create a new doctor
 

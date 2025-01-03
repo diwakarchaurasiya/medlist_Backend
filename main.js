@@ -13,6 +13,7 @@ const cookieParser = require('cookie-parser');
 app.use(express.json());
 app.use(cors({ credentials: true, }));
 connectDB();
+app.use(express.urlencoded({ extended: false }))
 connectCloudinary();
 app.use(cookieParser());
 

@@ -60,9 +60,8 @@ const loginPatient = async (req, res) => {
             return res.status(400).json({ success: false, message: 'Invalid credentials' });
         }
         const patientToken = await jwt.sign({ role: patient.role, id: patient._id }, process.env.JWT_SECRET);
-        res.cookie("authToken", patientToken);
 
-        res.status(200).json({ success: true, data: "Login Sucessfully" });
+        res.status(200).json({ success: true, data: patientToken });
     } catch (error) {
         res.status(500).json({ success: false, message: error.message });
     }

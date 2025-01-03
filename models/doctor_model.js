@@ -52,14 +52,13 @@ const doctorSchema = new mongoose.Schema({
     licenseNumber: {
         type: String,
         required: [true, "License number is required"],
-        unique: true,
+        unique: [true, "License number must be unique"],
         trim: true,
         default: "NMLS ID 12345"
     },
     qualification: {
-        type: [String], // Array of qualifications
+        type: String,
         required: [true, "Qualification is required"],
-        default: [],
     },
     workingHours: {
         start: {

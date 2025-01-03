@@ -3,6 +3,7 @@ const router = express.Router();
 const { createDoctor, getAllDoctors, getDoctorById, updateDoctor, deleteDoctor, loginDoctor } = require('../controllers/doctors_controller');
 const authMiddleware = require('../middlewares/doctors/authD');
 const upload = require('../middlewares/multer');
+const patientAuth = require('../middlewares/patients/authPatient');
 
 router.post('/register', upload.single('profileImage'), createDoctor);
 router.post('/login', loginDoctor);
