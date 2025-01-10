@@ -1,7 +1,7 @@
 const jwt = require('jsonwebtoken');
 const Doctor = require('../models/doctor_model');
 const bcrypt = require('bcrypt');
-const cloudinary = require('cloudinary').v2;
+const upload = require('../middlewares/multer');
 // Create a new doctor
 const createDoctor = async (req, res) => {
     try {
@@ -15,7 +15,6 @@ const createDoctor = async (req, res) => {
             password,
             licenseNumber,
             qualification,
-            profileImage,
             workingHours
         } = req.body;
         console.log(req.file);
@@ -23,7 +22,6 @@ const createDoctor = async (req, res) => {
         if (!name || !specialization || !experience || !contactNumber || !email || !licenseNumber || !qualification || !workingHours || !password || !appointmentFees) {
             return res.status(400).json({ success: false, message: 'All fields are required' });
         }
-        console.log(await profileImage)
         const docExist = await Doctor.findOne({ email: email });
         if (docExist) {
             return res.status(400).json({ success: false, message: 'Email Already Exist' });
@@ -32,16 +30,9 @@ const createDoctor = async (req, res) => {
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(password, salt);
 
-        // Upload profile image to Cloudinary
-
-        const uploadCloudinary = await cloudinary.uploader.upload(profileImage, { resource_type: "image" });
-        console.log(uploadCloudinary)
-        const imageUrl = await uploadCloudinary?.secure_url;
-        // const imageUrl = "https://medlistbydiwakar.netlify.app/assets/doc2-Y_tw-_wb.png";
-
         // Create a new doctor
 
-        const doctorData = { ...req.body, password: hashedPassword, profileImage: imageUrl }
+        const doctorData = { ...req.body, password: hashedPassword }
 
         const doctor = await Doctor.create(doctorData);
         res.status(201).json({ success: true, data: doctor });
@@ -49,6 +40,43 @@ const createDoctor = async (req, res) => {
         res.status(400).json({ success: false, message: "Error during doctor registration " + error.message });
     }
 };
+
+// const cloudinary = require('../config/cloudinary'); // Import cloudinary
+// // Update profile image
+// const uploadProfileImage = async (req, res) => {
+//     try {
+//         const doctorId = req.params.id;
+//         if (!req.file) {
+//             return res.status(400).json({ success: false, message: "No file uploaded" });
+//         }
+//         const doctorExist = await Doctor.findById(doctorId);
+//         if (!doctorExist) {
+//             return res.status(404).json({ success: false, message: 'Doctor not found' });
+//         }
+
+//         const result = await cloudinary.uploader.upload(req.file.path, {
+//             folder: "profile_images",
+//             resource_type: "image"
+//         });
+
+//         const imageUrl = result?.secure_url;
+
+//         const updatedDoctor = await Doctor.findByIdAndUpdate(
+//             doctorId,
+//             { profileImage: imageUrl },
+//             { new: true }
+//         );
+
+//         res.status(200).json({ success: true, data: updatedDoctor });
+//     } catch (error) {
+//         res.status(500).json({ success: false, message: error.message });
+//     }
+// };
+
+
+
+
+
 const loginDoctor = async (req, res) => {
     try {
         let { email, password } = req.body;
@@ -67,7 +95,7 @@ const loginDoctor = async (req, res) => {
         const doctorToken = await jwt.sign({ role: doctor.role, id: doctor._id }, process.env.JWT_SECRET);
         res.cookie("authToken", doctorToken);
 
-        res.status(200).json({ success: true, data: "Login Sucessfully" });
+        res.status(200).json({ success: true, data: doctorToken });
     } catch (error) {
         res.status(500).json({ success: false, message: error.message });
     }
@@ -128,5 +156,6 @@ module.exports = {
     getDoctorById,
     updateDoctor,
     deleteDoctor,
-    loginDoctor
+    loginDoctor,
+    // uploadProfileImage
 };
