@@ -4,7 +4,6 @@ const app = express();
 require('dotenv').config();
 const port = process.env.PORT || 3000;
 const connectDB = require('./config/mogodb.js');
-const connectCloudinary = require('./config/cloudinary.js');
 const doctorRoutes = require('./routes/doctor_routes.js');
 const patientRoutes = require('./routes/patient_routes.js');
 const appointmentRoutes = require('./routes/appointment_routes.js');
@@ -15,7 +14,6 @@ app.use(express.json());
 app.use(cors({ credentials: true, }));
 connectDB();
 app.use(express.urlencoded({ extended: false }))
-connectCloudinary();
 app.use(cookieParser());
 
 

@@ -10,7 +10,7 @@ router.post('/login', loginDoctor);
 router.get('/', getAllDoctors);
 router.get('/:id', getDoctorById);
 router.put('/:id', updateDoctor);
-// router.put('/profileimage/:id', upload.single('profileImage'), uploadProfileImage);
+router.put('/image/:id', upload.single('profileImage'), uploadProfileImage);
 router.delete('/:id', authMiddleware, deleteDoctor);
 
 module.exports = router;

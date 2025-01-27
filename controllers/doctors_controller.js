@@ -41,37 +41,33 @@ const createDoctor = async (req, res) => {
     }
 };
 
-// const cloudinary = require('../config/cloudinary'); // Import cloudinary
-// // Update profile image
-// const uploadProfileImage = async (req, res) => {
-//     try {
-//         const doctorId = req.params.id;
-//         if (!req.file) {
-//             return res.status(400).json({ success: false, message: "No file uploaded" });
-//         }
-//         const doctorExist = await Doctor.findById(doctorId);
-//         if (!doctorExist) {
-//             return res.status(404).json({ success: false, message: 'Doctor not found' });
-//         }
 
-//         const result = await cloudinary.uploader.upload(req.file.path, {
-//             folder: "profile_images",
-//             resource_type: "image"
-//         });
 
-//         const imageUrl = result?.secure_url;
 
-//         const updatedDoctor = await Doctor.findByIdAndUpdate(
-//             doctorId,
-//             { profileImage: imageUrl },
-//             { new: true }
-//         );
+const cloudinary = require('../config/cloudinary'); // Import cloudinary
+// Update profile image
+const uploadProfileImage = async (req, res) => {
+    try {
+        if (!req.file) {
+            return res.status(400).json({ message: 'No file uploaded' });
+        }
 
-//         res.status(200).json({ success: true, data: updatedDoctor });
-//     } catch (error) {
-//         res.status(500).json({ success: false, message: error.message });
-//     }
-// };
+        // Upload to Cloudinary
+        const result = await cloudinary.uploader.upload(req.file.path, {
+            folder: 'doctor_profiles',
+        });
+
+        let profileUpdated = await Doctor.findByIdAndUpdate(req.params.id, { profileImage: result.secure_url }, { new: true });
+        if (!profileUpdated) {
+            return res.status(404).json({ message: 'Doctor not found' });
+        }
+        res.status(200).json({ success: true, message: "Profile Photo Updated successfully" });
+    } catch (error) {
+        console.error('Upload Error:', error.message); // Debug log for error
+        res.status(500).json({ message: 'Failed to upload image', error: error.message });
+    }
+};
+
 
 
 
@@ -157,5 +153,5 @@ module.exports = {
     updateDoctor,
     deleteDoctor,
     loginDoctor,
-    // uploadProfileImage
+    uploadProfileImage
 };
