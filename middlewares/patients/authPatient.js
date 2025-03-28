@@ -1,7 +1,6 @@
 const patientAuth = (req, res, next) => {
     // const token = req.headers.authToken;
     console.log("patient middleware")
-    console.log(token)
     if (!token) {
         return res.status(401).json({ error: 'Authentication token is missing.' });
     }

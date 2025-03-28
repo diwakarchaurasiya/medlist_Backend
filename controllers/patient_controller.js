@@ -10,7 +10,6 @@ const jwt = require('jsonwebtoken');
 // Create a new patient
 const createPatient = async (req, res) => {
     try {
-        console.log(req.body);
         const { name, age, gender, dateOfBirth, contactNumber, email, password } = req.body;
         if (!name || !age || !gender || !dateOfBirth || !contactNumber || !email || !password) {
             return res.status(400).json({ success: false, message: 'All fields are required' });
@@ -59,7 +58,7 @@ const loginPatient = async (req, res) => {
         if (!validPassword) {
             return res.status(400).json({ success: false, message: 'Invalid credentials' });
         }
-        const patientToken = await jwt.sign({ role: patient.role, id: patient._id }, process.env.JWT_SECRET);
+        const patientToken = await jwt.sign({ role: patient.role, email: patient.email }, process.env.JWT_SECRET);
 
         res.status(200).json({ success: true, data: patientToken });
     } catch (error) {

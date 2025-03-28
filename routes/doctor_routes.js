@@ -11,6 +11,6 @@ router.get('/', getAllDoctors);
 router.get('/:id', getDoctorById);
 router.put('/:id', updateDoctor);
 router.put('/image/:id', upload.single('profileImage'), uploadProfileImage);
-router.delete('/:id', authMiddleware, deleteDoctor);
+router.delete('/:id', deleteDoctor);
 
 module.exports = router;

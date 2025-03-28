@@ -17,7 +17,6 @@ const createDoctor = async (req, res) => {
             qualification,
             workingHours
         } = req.body;
-        console.log(req.file);
         // Check if all fields are entered
         if (!name || !specialization || !experience || !contactNumber || !email || !licenseNumber || !qualification || !workingHours || !password || !appointmentFees) {
             return res.status(400).json({ success: false, message: 'All fields are required' });
@@ -88,7 +87,7 @@ const loginDoctor = async (req, res) => {
         if (!validPassword) {
             return res.status(400).json({ success: false, message: 'Invalid credentials' });
         }
-        const doctorToken = await jwt.sign({ role: doctor.role, id: doctor._id }, process.env.JWT_SECRET);
+        const doctorToken = await jwt.sign({ role: doctor.role, email: doctor.email }, process.env.JWT_SECRET);
         res.cookie("authToken", doctorToken);
 
         res.status(200).json({ success: true, data: doctorToken });
