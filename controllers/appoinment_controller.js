@@ -26,14 +26,21 @@ async function createAppointment(req, res) {
                 message: 'An appointment is already booked with this doctor at the given date and time.',
             });
         }
+        // ✅ Fetch the appointment fee from the doctor model
+        const doctor = await Doctor.findById(doctorId);
+        if (!doctor) {
+            return res.status(404).json({ message: 'Doctor not found.' });
+        }
 
-        // Create the new appointment
+        const appointmentFee = doctor.appointmentFees; // Assuming appointmentFees is a field in the Doctor model
         const newAppointment = await Appointment.create({
             patientId,
             doctorId,
             appointmentDate,
             appointmentTime,
-            appointmentDay
+            appointmentDay,
+            amount: appointmentFee, // Store fee in the appointment
+            paymentStatus: "unpaid", // initially unpaid
         });
 
         res.status(201).json({
