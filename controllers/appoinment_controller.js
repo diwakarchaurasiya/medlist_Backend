@@ -2,7 +2,8 @@ const Appointment = require('../models/appointment_model'); // Replace with the 
 
 // Controller function to create an appointment
 async function createAppointment(req, res) {
-    const { patientId, doctorId, appointmentDate, appointmentTime, appointmentDay } = req.body;
+    const { patientId, doctorId, appointmentDate, appointmentTime, appointmentDay,
+        paymentStatus } = req.body;
     console.log(req.body)
     try {
         // Check if all required fields are provided
@@ -39,8 +40,9 @@ async function createAppointment(req, res) {
             appointmentDate,
             appointmentTime,
             appointmentDay,
+            status: "Scheduled", // Default status
             amount: appointmentFee, // Store fee in the appointment
-            paymentStatus: "unpaid", // initially unpaid
+            paymentStatus: paymentStatus, // initially unpaid
         });
 
         res.status(201).json({

@@ -37,6 +37,8 @@ const appointmentSchema = new mongoose.Schema({
     amount: {
         type: Number,
         required: true,
+        min: 0, // Ensure amount is non-negative
+        default: 0,
     },
     createdAt: {
         type: Date,
