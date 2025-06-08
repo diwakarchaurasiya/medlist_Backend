@@ -1,4 +1,6 @@
 const Appointment = require('../models/appointment_model'); // Replace with the correct path to your model
+const Doctor = require('../models/doctor_model');
+
 
 // Controller function to create an appointment
 async function createAppointment(req, res) {
