@@ -2,10 +2,11 @@ const express = require('express');
 const router = express.Router();
 const { createDoctor, getAllDoctors, getDoctorById, updateDoctor, deleteDoctor, loginDoctor, uploadProfileImage } = require('../controllers/doctors_controller');
 const authMiddleware = require('../middlewares/doctors/authDoctor');
-const upload = require('../middlewares/multer');
 const patientAuth = require('../middlewares/patients/authPatient');
+const multer = require('multer');
+const upload = multer();
 
-router.post('/register', createDoctor);
+router.post('/register', upload.none(), createDoctor);
 router.post('/login', loginDoctor);
 router.get('/', getAllDoctors);
 router.get('/:id', getDoctorById);
