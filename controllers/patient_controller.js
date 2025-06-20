@@ -28,9 +28,33 @@ const createPatient = async (req, res) => {
         // const imageUrl = uploadCloudinary.secure_url;
         const imageUrl = "https://cdn-icons-png.flaticon.com/512/3135/3135715.png";
 
+        const generateUniquePatientId = async () => {
+            const patients = await Patient.find({}, 'patientId');
+
+            const usedNumbers = patients
+                .map(p => parseInt(p.patientId.replace('pat', ''), 10))
+                .filter(n => !isNaN(n))
+                .sort((a, b) => a - b);
+
+            let newNumber = 1;
+            for (let i = 0; i < usedNumbers.length; i++) {
+                if (usedNumbers[i] !== i + 1) {
+                    newNumber = i + 1;
+                    break;
+                }
+                newNumber = usedNumbers.length + 1;
+            }
+
+            return `pat${newNumber.toString().padStart(2, '0')}`;
+        };
+
+        // Generate new docId like doc01, doc02, doc10...
+        const newPatientId = await generateUniquePatientId();
         // Create a new patient
         const patientData = {
+            patientId: newPatientId,
             ...req.body,
+
             password: hashedPassword,
             profileImage: imageUrl
         };
@@ -58,9 +82,11 @@ const loginPatient = async (req, res) => {
         if (!validPassword) {
             return res.status(400).json({ success: false, message: 'Invalid credentials' });
         }
-        const patientToken = await jwt.sign({ role: patient.role, email: patient.email }, process.env.JWT_SECRET);
+        const patientToken = jwt.sign({ role: patient.role, email: patient.email }, process.env.JWT_SECRET);
 
-        res.status(200).json({ success: true, data: patientToken });
+        res.status(200).json({
+            success: true, data: { user: patient, token: patientToken }
+        });
     } catch (error) {
         res.status(500).json({ success: false, message: error.message });
     }

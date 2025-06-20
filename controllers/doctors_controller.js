@@ -48,8 +48,31 @@ const createDoctor = async (req, res) => {
             !workingHours || Object.keys(workingHours).length === 0 || // Basic check for workingHours object
             !workingHours.start || !workingHours.end // Check nested properties for workingHours
         ) {
-            return res.status(400).json({ success: false, message: 'All required fields are missing or invalid.' });
+            return res.status(400).json({ success: false, message: 'Required fields are missing or invalid.' });
         }
+        const generateUniqueDocId = async () => {
+            const doctors = await Doctor.find({}, 'docId'); // Fetch only docId field
+
+            const usedNumbers = doctors
+                .map(doc => parseInt(doc.docId.replace('doc', ''), 10))
+                .filter(n => !isNaN(n))
+                .sort((a, b) => a - b);
+
+            // Find the lowest available number
+            let newNumber = 1;
+            for (let i = 0; i < usedNumbers.length; i++) {
+                if (usedNumbers[i] !== i + 1) {
+                    newNumber = i + 1;
+                    break;
+                }
+                newNumber = usedNumbers.length + 1;
+            }
+
+            return `doc${newNumber.toString().padStart(2, '0')}`;
+        };
+
+        // Generate new docId like doc01, doc02, doc10...
+        const newDocId = await generateUniqueDocId();
 
 
         // Check if doctor with email already exists
@@ -64,6 +87,7 @@ const createDoctor = async (req, res) => {
 
         // Prepare the doctor data object for Mongoose
         const doctorData = {
+            docId: newDocId,
             name,
             specialization,
             experience,
@@ -136,10 +160,11 @@ const loginDoctor = async (req, res) => {
         if (!validPassword) {
             return res.status(400).json({ success: false, message: 'Invalid credentials' });
         }
-        const doctorToken = await jwt.sign({ role: doctor.role, email: doctor.email }, process.env.JWT_SECRET);
-        res.cookie("authToken", doctorToken);
+        const doctorToken = jwt.sign({ role: doctor.role, email: doctor.email }, process.env.JWT_SECRET);
 
-        res.status(200).json({ success: true, data: doctorToken });
+        res.status(200).json({
+            success: true, data: { user: doctor, token: doctorToken }
+        });
     } catch (error) {
         res.status(500).json({ success: false, message: error.message });
     }

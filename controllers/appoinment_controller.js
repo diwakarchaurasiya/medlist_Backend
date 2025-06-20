@@ -90,6 +90,37 @@ async function updateAppointmentStatus(req, res) {
     }
 }
 
+// ✅ Get appointments by patient ID
+async function getAppointmentsByPatientId(req, res) {
+    const { patientId } = req.params;
+
+    try {
+        const appointments = await Appointment.find({ patientId })
+            .populate("doctorId")
+            .sort({ appointmentDate: -1 });
+
+        res.status(200).json(appointments);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+}
+
+// ✅ Get appointments by doctor ID
+async function getAppointmentsByDoctorId(req, res) {
+    const { doctorId } = req.params;
+
+    try {
+        const appointments = await Appointment.find({ doctorId })
+            .populate("patientId")
+            .sort({ appointmentDate: -1 });
+
+        res.status(200).json(appointments);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+}
+
+
 // Controller function to delete an appointment
 async function deleteAppointment(req, res) {
     const { id } = req.params;
@@ -114,4 +145,6 @@ module.exports = {
     getAllAppointments,
     updateAppointmentStatus,
     deleteAppointment,
+    getAppointmentsByPatientId,
+    getAppointmentsByDoctorId,
 };

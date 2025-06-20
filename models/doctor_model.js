@@ -1,6 +1,12 @@
 const mongoose = require('mongoose');
 
 const doctorSchema = new mongoose.Schema({
+    docId: {
+        type: String,
+        required: [true, "Doctor ID is required"],
+        unique: true,
+        trim: true,
+    },
     name: {
         type: String,
         required: [true, "Doctor's name is required"],
