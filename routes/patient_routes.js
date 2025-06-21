@@ -7,8 +7,6 @@ const {
     deletePatient,
     loginPatient,
 } = require('../controllers/patient_controller');
-const patientAuth = require('../middlewares/patients/authPatient.js');
-
 const router = express.Router();
 
 // Create a new patient
@@ -22,7 +20,7 @@ router.get('/', getAllPatients);
 router.get('/:id', getPatientById);
 
 // Update a specific patient by ID
-router.put('/:id', patientAuth, updatePatient);
+router.put('/:id', updatePatient);
 
 // Delete a specific patient by ID
 router.delete('/:id', deletePatient);

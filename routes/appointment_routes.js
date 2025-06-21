@@ -1,10 +1,9 @@
 const express = require('express');
 const router = express.Router();
 const { createAppointment, getAllAppointments, updateAppointmentStatus, deleteAppointment, getAppointmentsByDoctorId, getAppointmentsByPatientId } = require('../controllers/appoinment_controller');
-const doctorAuth = require('../middlewares/doctors/authDoctor');
-const patientAuth = require('../middlewares/patients/authPatient');
+const authenticateUser = require('../middlewares/authMiddleware');
 
-router.post('/create', createAppointment);
+router.post('/create', authenticateUser, createAppointment);
 // router.post('/login', loginDoctor);email, password
 router.get('/', getAllAppointments);
 router.patch('/:id', updateAppointmentStatus);
