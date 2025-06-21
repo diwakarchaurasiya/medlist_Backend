@@ -8,6 +8,7 @@ const doctorRoutes = require('./routes/doctor_routes.js');
 const patientRoutes = require('./routes/patient_routes.js');
 const appointmentRoutes = require('./routes/appointment_routes.js');
 const cookieParser = require('cookie-parser');
+const adminRouter = require('./routes/admin_routes.js');
 
 // middlewares 
 app.use(express.json());
@@ -25,6 +26,8 @@ app.use(cookieParser());
 app.use("/api/doctor", doctorRoutes);
 app.use("/api/patient", patientRoutes);
 app.use("/api/appointment", appointmentRoutes);
+app.use("/api/admin", adminRouter);
+
 
 
 
