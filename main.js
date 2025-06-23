@@ -9,6 +9,7 @@ const patientRoutes = require('./routes/patient_routes.js');
 const appointmentRoutes = require('./routes/appointment_routes.js');
 const cookieParser = require('cookie-parser');
 const adminRouter = require('./routes/admin_routes.js');
+const paymentRoutes = require('./routes/payment_routes.js'); // Import the new payment routes
 
 // middlewares 
 app.use(express.json());
@@ -25,6 +26,7 @@ app.use(cookieParser());
 
 app.use("/api/doctor", doctorRoutes);
 app.use("/api/patient", patientRoutes);
+app.use('/api/payment', paymentRoutes); // Mount the new payment routes
 app.use("/api/appointment", appointmentRoutes);
 app.use("/api/admin", adminRouter);
 
